@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>ESP32 Custom Controller</h1>
+  <button id="connect">1. Connect to ESP32</button>
+  <hr>
+  <button onmousedown="send('W')" onmouseup="send('S')">UP (Hold to move)</button>
+  <button onclick="send('A')">LEFT (Single Tap)</button>
+  <button onclick="send('D')">RIGHT (Single Tap)</button>
+  
+  <script>
+    async function connect() {
+  const device = await navigator.bluetooth.requestDevice({
+    // 1. Change the name filter to look for 'CIRCUITPY'
+    filters: [{ namePrefix: 'CIRCUITPY' }], 
+    // 2. Change the UUID to the standard Nordic UART used by CircuitPython
+    optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+  });
+  
+  const server = await device.gatt.connect();
+  const service = await server.getPrimaryService('6e400001-b5a3-f393-e0a9-e50e24dcca9e');
+  
+  // 3. This characteristic is for WRITING data to the ESP32
+  char = await service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e');
+  alert("Connected to CircuitPython!");
+}
+
+  </script>
+</body>
+</html>
